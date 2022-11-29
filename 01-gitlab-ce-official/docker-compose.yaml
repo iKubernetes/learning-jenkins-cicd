@@ -1,0 +1,42 @@
+version: '3.6'
+
+volumes:
+  gitlab_data: {}
+  gitlab_logs: {}
+  gitlab_conf: {}
+
+networks:
+  gitlab_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/24
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:15.6.0-ce.0
+    restart: always
+    hostname: 'gitlab.example.com'
+    environment:
+      #GITLAB_HOME: /gitlab
+      GITLAB_OMNIBUS_CONFIG: |
+        #external_url 'https://code.magedu.com'
+        gitlab_rails['gitlab_shell_ssh_port'] = 22022
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - '80:80'
+        #- '443:443'
+      - '22022:22'
+    volumes:
+      - 'gitlab_conf:/etc/gitlab'
+      - 'gitlab_logs:/var/log/gitlab'
+      - 'gitlab_data:/var/opt/gitlab'
+      #- '$GITLAB_HOME/config:/etc/gitlab'
+      #- '$GITLAB_HOME/logs:/var/log/gitlab'
+      #- '$GITLAB_HOME/data:/var/opt/gitlab'
+    shm_size: '256m'
+    networks:
+      gitlab_net:
+        ipv4_address: 172.31.0.2
+        aliases:
+          - codehub

@@ -1,0 +1,1 @@
+deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://mirrors.cloud.tencent.com/kubernetes/apt/ kubernetes-xenial main

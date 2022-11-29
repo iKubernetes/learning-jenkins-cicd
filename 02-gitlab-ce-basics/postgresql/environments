@@ -1,0 +1,4 @@
+DB_USER=gitlab
+DB_PASS=MageEdu.C0m
+DB_NAME=gitlabhq_production
+DB_EXTENSION=pg_trgm,btree_gist

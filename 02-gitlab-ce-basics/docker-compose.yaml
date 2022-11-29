@@ -1,0 +1,70 @@
+version: '3.6'
+
+volumes:
+  redis_data: {}
+  postgresql_data: {}
+  gitlab_data: {}
+
+networks:
+  gitlab_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.2.0/24
+
+services:
+
+  redis:
+    restart: always
+    image: redis:6.2.6
+    networks:
+      gitlab_net:
+        ipv4_address: 172.31.2.8
+        aliases:
+          - kvstor
+    command:
+    - --loglevel warning
+    volumes:
+    - redis_data:/data:Z
+
+  postgresql:
+    restart: always
+    image: sameersbn/postgresql:12-20200524
+    networks:
+      gitlab_net:
+        ipv4_address: 172.31.2.9
+        aliases:
+          - db
+          - dbstor
+    volumes:
+    - postgresql_data:/var/lib/postgresql:Z
+    env_file:
+      - postgresql/environments
+
+  gitlab:
+    image: sameersbn/gitlab:15.5.0
+    hostname: gitlab.magedu.com
+    depends_on:
+    - redis
+    - postgresql
+    networks:
+      gitlab_net:
+        ipv4_address: 172.31.2.2
+        aliases:
+          - gitlab
+          - ci
+          - codehub
+    ports:
+    - "80:80"
+    - "10022:22"
+    volumes:
+    - gitlab_data:/home/git/data:Z
+    healthcheck:
+      test: ["CMD", "/usr/local/sbin/healthcheck"]
+      interval: 2m
+      timeout: 10s
+      retries: 3
+      start_period: 5m
+    env_file:
+      - gitlab/environments
+    restart: always

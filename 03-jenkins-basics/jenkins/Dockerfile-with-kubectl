@@ -1,0 +1,16 @@
+FROM jenkins/jenkins:jdk11
+
+ADD ./sources.list /etc/apt/sources.list
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y apt-transport-https ca-certificates curl && \
+    curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://repo.huaweicloud.com/kubernetes/apt/doc/apt-key.gpg
+
+ADD ./kubernetes.list /etc/apt/sources.list.d/kubernetes.list
+
+RUN apt-get update && \
+    apt-get -y install maven python3 docker.io golang gradle kubectl && \
+    apt-get clean
+    # npm, php and ruby not installed

@@ -1,0 +1,75 @@
+version: '3.6'
+
+volumes:
+  tomcat01_apps: {}
+  tomcat02_apps: {}
+  tomcat03_apps: {}
+
+networks:
+  tomcat_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.4.0/24
+
+services:
+  tomcat01:
+    #image: tomcat:jdk11
+    build:
+      context: tomcat
+      dockerfile: Dockerfile 
+    hostname: tomcat01.magedu.com
+    ports:
+      - 8088:8080
+    volumes:
+      - tomcat01_apps:/usr/local/tomcat/webapps
+      - ./tomcat/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+    networks:
+      tomcat_net:
+        ipv4_address: 172.31.4.11
+        aliases:
+          - tomcat01
+          - tomcat
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+
+  tomcat02:
+    build:
+      context: tomcat
+      dockerfile: Dockerfile 
+    hostname: tomcat02.magedu.com
+    ports:
+      - 8089:8080
+    volumes:
+      - tomcat02_apps:/usr/local/tomcat/webapps
+      - ./tomcat/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+    networks:
+      tomcat_net:
+        ipv4_address: 172.31.4.12
+        aliases:
+          - tomcat02
+          - tomcat
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+
+  tomcat03:
+    build:
+      context: tomcat
+      dockerfile: Dockerfile 
+    hostname: tomcat03.magedu.com
+    ports:
+      - 8090:8080
+    volumes:
+      - tomcat03_apps:/usr/local/tomcat/webapps
+      - ./tomcat/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+    networks:
+      tomcat_net:
+        ipv4_address: 172.31.4.13
+        aliases:
+          - tomcat03
+          - tomcat
+    environment:
+      TZ: Asia/Shanghai
+    restart: always

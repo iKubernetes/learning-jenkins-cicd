@@ -1,0 +1,41 @@
+version: '3.6'
+
+volumes:
+  jenkins_data: {}
+  maven_cache: {}
+
+networks:
+  jenkins_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.3.0/24
+
+services:
+  jenkins:
+    build:
+      context: jenkins
+      dockerfile: Dockerfile
+    #image: jenkins/jenkins:jdk11
+    hostname: jenkins.magedu.com
+    user: root
+    env_file:
+      - jenkins/environments
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - jenkins_data:/var/jenkins_home:Z
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - maven_cache:/root/.m2
+    ports:
+      - 8080:8080
+      - 50000:50000
+    networks:
+      jenkins_net:
+        ipv4_address: 172.31.3.2
+        aliases:
+          - jenkins_master
+          - master
+          - jenkins_master01
+          - master01
+    restart: always
