@@ -1,0 +1,1 @@
+JAVA_OPTS='-Dhudson.slaves.NodeProvisioner.initialDelay=0 -Duser.timezone=Asia/Shanghai -Djenkins.install.runSetupWizard=true'

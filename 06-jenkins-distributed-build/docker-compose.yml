@@ -1,0 +1,93 @@
+version: '3.6'
+
+volumes:
+  jenkins01_data: {}
+  slave01_data: {}
+  slave01_remote_data: {}
+  slave02_data: {}
+  slave02_remote_data: {}
+
+networks:
+  jenkins_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.8.0/24
+
+services:
+  jenkins01:
+    image: jenkins/jenkins:jdk11
+    hostname: master01.magedu.com
+    user: root
+    env_file:
+      - conf/environments
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - jenkins01_data:/var/jenkins_home/
+    ports:
+      - 8080:8080
+      - 50000:50000
+    networks:
+      jenkins_net:
+        ipv4_address: 172.31.8.2
+        aliases:
+          - jenkins_master
+          - master
+          - jenkins_master01
+          - master01
+    extra_hosts:
+      #- "jenkins.magedu.com:${JENKINS_HOST_IP}"
+      - "reg.magedu.com:${HARBOR_HOST_IP}"
+      - "gitlab.magedu.com:${GITLAB_HOST_IP}"
+      - "tomcat.magedu.com:${TOMCAT_HOST_IP}"
+      - "sonar.magedu.com:${SONAR_HOST_IP}"
+    restart: always
+
+  slave01:
+    image: jenkins/jenkins:jdk11
+    hostname: slave01.magedu.com
+    user: root
+    env_file:
+      - conf/environments
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - slave01_data:/var/jenkins_home/
+      - slave01_remote_data:/appdata/jenkins/
+    ports:
+      - 8081:8080
+    networks:
+      jenkins_net:
+        ipv4_address: 172.31.8.11
+        aliases:
+          - jenkins_slave
+          - slave
+          - slave01
+          - jenkins_slave01
+          - node01
+    restart: always
+
+  slave02:
+    image: jenkins/jenkins:jdk11
+    hostname: slave02.magedu.com
+    user: root
+    env_file:
+      - conf/environments
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - slave02_data:/var/jenkins_home/
+      - slave02_remote_data:/appdata/jenkins/
+    ports:
+      - 8082:8080
+    networks:
+      jenkins_net:
+        ipv4_address: 172.31.8.12
+        aliases:
+          - jenkins_slave
+          - slave
+          - slave02
+          - jenkins_slave02
+          - node02
+    restart: always
