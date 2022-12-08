@@ -8,6 +8,7 @@ metadata:
 spec:
   args:
   - name: service-name
+  - name: namespace
   metrics:
   - name: success-rate
     # NOTE: prometheus queries return results in the form of a vector.
@@ -20,8 +21,8 @@ spec:
       prometheus:
         address: http://prometheus.prom.svc.cluster.local:9090
         query: |
-          sum(irate(nginx_ingress_controller_requests{service=~"{{args.service-name}}",status!~"[4-5].*"}[1m])) / 
-          sum(irate(nginx_ingress_controller_requests{service=~"{{args.service-name}}"}[1m]))
+          sum(irate(nginx_ingress_controller_requests{service=~"{{args.service-name}}",namespace=~"{{args.namespace}}",status!~"[4-5].*"}[1m])) / 
+          sum(irate(nginx_ingress_controller_requests{service=~"{{args.service-name}}",namespace=~"{{args.namespace}}"}[1m]))
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
@@ -37,6 +38,8 @@ spec:
         args:
         - name: service-name
           value: spring-boot-helloworld
+        - name: namespace
+          value: default
       canaryService: spring-boot-helloworld-canary
       stableService: spring-boot-helloworld
       trafficRouting:

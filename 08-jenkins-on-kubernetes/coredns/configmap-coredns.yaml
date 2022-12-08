@@ -8,9 +8,10 @@ data:
         }
         ready
         hosts {
-           172.29.7.9  jenkins02.magedu.com
-           172.29.7.1   sonar.magedu.com
-           172.29.6.200  gitlab.magedu.com
+           172.29.7.7  jenkins.magedu.com
+           172.29.7.8   sonar.magedu.com
+           172.29.7.6  gitlab.magedu.com
+           172.29.9.200 hub.magedu.com
            fallthrough
         }
         kubernetes cluster.local in-addr.arpa ip6.arpa {

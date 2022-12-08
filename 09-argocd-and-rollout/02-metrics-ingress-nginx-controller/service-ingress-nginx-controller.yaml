@@ -14,7 +14,7 @@ metadata:
 spec:
   allocateLoadBalancerNodePorts: true
   #externalIPs:
-  #- 172.29.6.200
+  #- 172.29.9.200
   externalTrafficPolicy: Cluster
   internalTrafficPolicy: Cluster
   ipFamilies:

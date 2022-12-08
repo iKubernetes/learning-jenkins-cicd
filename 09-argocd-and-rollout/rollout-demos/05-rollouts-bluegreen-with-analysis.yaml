@@ -7,20 +7,21 @@ metadata:
 spec:
   args:
   - name: service-name
+  - name: namespace
   metrics:
   - name: success-rate
     # NOTE: prometheus queries return results in the form of a vector.
     # So it is common to access the index 0 of the returned array to obtain the value
     successCondition: result[0] >= 0.95
-    interval: 20s 
-    count: 5
+    interval: 20s
+    count: 3
     failureLimit: 3
     provider:
       prometheus:
         address: http://prometheus.prom.svc.cluster.local:9090
         query: |
-          sum(irate(nginx_ingress_controller_requests{service=~"{{args.service-name}}",status!~"[4-5].*"}[1m])) / 
-          sum(irate(nginx_ingress_controller_requests{service=~"{{args.service-name}}"}[1m]))
+          sum(irate(nginx_ingress_controller_requests{service=~"{{args.service-name}}",namespace=~"{{args.namespace}}",status!~"[4-5].*"}[1m])) /
+          sum(irate(nginx_ingress_controller_requests{service=~"{{args.service-name}}",namespace=~"{{args.namespace}}"}[1m]))
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
@@ -51,13 +52,17 @@ spec:
         - templateName: success-rate
         args:
         - name: service-name
-          value: spring-boot-helloworld.default.svc.cluster.local
+          value: spring-boot-helloworld
+        - name: namespace
+          value: default
       postPromotionAnalysis:
         templates:
         - templateName: success-rate
         args:
         - name: service-name
-          value: spring-boot-helloworld.default.svc.cluster.local
+          value: spring-boot-helloworld
+        - name: namespace
+          value: default
       autoPromotionEnabled: true
 ---
 kind: Service
