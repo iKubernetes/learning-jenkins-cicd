@@ -77,78 +77,74 @@ while true; do curl http://hello.magedu.com; echo; sleep 0.$[$RANDOM%10]; done
 #### Prometheus Metrics
 
 ```
-irate of requests that the response code not 5xx: sum(irate(istio_requests_total{reporter="source",destination_service="spring-boot-helloworld.default.svc.cluster.local",response_code!~"5.*"}[1m]))
+irate(nginx_ingress_controller_requests{service=~"spring-boot-helloworld",namespace=~"default",status!~"[4-5].*"}[1m])
 ```
 
 ```
-irate of all requests: irate(istio_requests_total{reporter="source",destination_service="spring-boot-helloworld.default.svc.cluster.local"}[1m])
+irate(nginx_ingress_controller_requests{service=~"spring-boot-helloworld",namespace=~"default"}[1m])
 ```
 
 Successful Rate:
 
 ```
-sum(irate(istio_requests_total{reporter="source",destination_service="spring-boot-helloworld.default.svc.cluster.local",response_code!~"5.*"}[1m]))/sum(irate(istio_requests_total{reporter="source",destination_service="spring-boot-helloworld.default.svc.cluster.local"}[1m]))
+sum(irate(nginx_ingress_controller_requests{service=~"spring-boot-helloworld",namespace=~"default",status!~"[4-5].*"}[1m]))/sum(irate(nginx_ingress_controller_requests{service=~"spring-boot-helloworld",namespace=~"default"}[1m]))
 ```
 
 
 #### Rollout
 
 ```bash
-kubectl argo rollouts set image rollouts-helloworld-with-analysis spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.6 -n demo 
+kubectl argo rollouts set image rollouts-helloworld-with-analysis spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.3 -n demo 
 ```
 
 ### Blue Green Rollout
 
+资源配置文件：04-rollouts-bluegreen-demo.yaml
+
 #### Deploy
 
 ```bash
-kubectl apply -f 05-argo-rollouts-bluegreen-demo.yaml -n demo
+kubectl apply -f 04-rollouts-bluegreen-demo.yaml
 ```
 
 #### client
 
-```bash
-kubectl run client-$RANDOM --image ikubernetes/admin-box:v1.2 --rm -it --restart=Never --command -- /bin/bash
-```
-
 send requests...
 ```bash
-while true; do curl http://spring-boot-helloworld.demo.svc.cluster.local; echo; sleep 1; done
+while true; do curl http://hello.magedu.com; echo; sleep 0.$[$RANDOM%10]; done
 ```
 
 #### Rollout
 
 ```bash
-kubectl argo rollouts set image rollout-helloworld-bluegreen spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.6 -n demo
+kubectl argo rollouts set image rollout-helloworld-bluegreen spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.3
 ```
 
 #### Promote
 
 ```bash
-kubectl argo rollouts promote rollout-helloworld-bluegreen -n demo
+kubectl argo rollouts promote rollout-helloworld-bluegreen
 ```
 
 ### Blue Green Rollout with Analysis
 
+配置文件：05-rollouts-bluegreen-with-analysis.yaml
+
 #### Deploy
 
 ```bash
-kubectl apply -f 06-argo-rollouts-bluegreen-with-analysis.yaml -n demo
+kubectl apply -f 05-rollouts-bluegreen-with-analysis.yaml
 ```
 
 #### client
 
-```bash
-kubectl run client-$RANDOM --image ikubernetes/admin-box:v1.2 --rm -it --restart=Never --command -- /bin/bash
-```
-
 send requests...
 ```bash
-while true; do curl http://spring-boot-helloworld.demo.svc.cluster.local; echo; sleep 1; done
+while true; do curl http://hello.magedu.com; echo; sleep 0.$[$RANDOM%10]; done
 ```
 
 #### Rollout
 
 ```bash
-kubectl argo rollouts set image rollout-helloworld-bluegreen-with-analysis spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.6 -n demo
+kubectl argo rollouts set image rollout-helloworld-bluegreen-with-analysis spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.3
 ```
