@@ -1,92 +1,77 @@
 # Argo Rollouts Examples.
 
-### 01-argo-rollouts-demo.yaml
+Rollouts资源配置示例。
+
+### 01. 基础配置示例
+
+配置文件：01-basic-rollouts-demo.yaml
 
 ```bash
-kubectl create namespace demo
-kubectl apply -f 01-argo-rollouts-demo.yaml -n demo
+kubectl apply -f 01-basic-rollouts-demo.yaml
 ```
 
-#### client
+#### 测试请求
 
+向Ingress资源中指定的主机名hello.magedu.com发起测试请求...
 ```bash
-kubectl run client-$RANDOM --image ikubernetes/admin-box:v1.2 --rm -it --restart=Never --command -- /bin/bash
-```
-
-send requests...
-```bash
-while true; do curl http://spring-boot-helloworld.demo.svc.cluster.local; echo; sleep 1; done
+while true; do curl http://hello.magedu.com; echo; sleep 0.$[$RANDOM%10]; done
 ```
 
 #### rollout
 
 ```bash
-kubectl argo rollouts set image rollouts-spring-boot-helloworld spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.6 -n demo
+kubectl argo rollouts set image rollouts-spring-boot-helloworld spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.3
 ```
 
 #### watch
 
 ```bash
-kubectl argo rollouts get rollout rollouts-spring-boot-helloworld --watch -n demo
+kubectl argo rollouts get rollout rollouts-spring-boot-helloworld --watch
 ```
 
 #### Promote
 
 ```bash
-kubectl argo rollouts promote rollouts-spring-boot-helloworld -n demo
+kubectl argo rollouts promote rollouts-spring-boot-helloworld
 ```
 
-### 02-argo-rollouts-with-istio-traffic-shifting.yaml
+### 02.基于Ingress Nginx的Canary发布和流量迁移
 
-**Dependicies**: Istio
+配置文件：02-rollouts-with-ingress-nginx-traffic-shifting.yaml
+
+**依赖项**: Ingress Nginx
 
 ```bash
-kubectl create namespace demo
-kubectl label namespace demo istio-injection=enabled
-kubectl apply -f 02-argo-rollouts-with-istio-traffic-shifting.yaml -n demo
+kubectl apply -f 02-rollouts-with-ingress-nginx-traffic-shifting.yaml
 ```
 
 #### Client
-Install a client, and send request to http://spring-boot-helloworld.demo.svc
-
+向Ingress资源中指定的主机名hello.magedu.com发起测试请求...
 ```bash
-export ISTIO_DIR=/usr/local/istio/
-kubectl apply -f ${ISTIO_DIR}/samples/sleep/sleep.yaml
-export SLEEP=$(kubectl get pods -l app=sleep -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $SLEEP -- /bin/sh
-```
-
-send requests...
-```bash
-while true; do curl http://spring-boot-helloworld.demo.svc.cluster.local; echo; sleep 1; done
+while true; do curl http://hello.magedu.com; echo; sleep 0.$[$RANDOM%10]; done
 ```
 
 #### Rollout
 
 ```bash
-kubectl argo rollouts set image rollouts-helloworld-with-traffic-shifting spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.6 -n demo
+kubectl argo rollouts set image rollouts-helloworld-with-traffic-shifting spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.3
 ```
 
-### 03-argo-rollouts-with-analysis.yaml
+### 03.基于Prometheus和Ingress Nginx的渐进式交付
 
-**Dependicies**: Istio and Prometheus
+配置文件：03-rollouts-with-prometheus-analysis.yaml
+
+**依赖项**: Ingress Nginx
 
 ```bash
-kubectl create namespace demo
-kubectl label namespace demo istio-injection=enabled
-kubectl apply -f 03-argo-rollouts-with-analysis.yaml -n demo
+kubectl apply -f 03-rollouts-with-prometheus-analysis.yaml
 ```
 #### client
 
-```bash
-export ISTIO_DIR=/usr/local/istio/
-kubectl apply -f ${ISTIO_DIR}/samples/sleep/sleep.yaml
-export SLEEP=$(kubectl get pods -l app=sleep -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $SLEEP -- /bin/sh
-```
+向Ingress资源中指定的主机名hello.magedu.com发起测试请求...
 
 ```bash
-while true; do curl http://spring-boot-helloworld.demo.svc.cluster.local; echo; sleep 1; done
+while true; do curl http://hello.magedu.com; echo; sleep 0.$[$RANDOM%10]; done
 ```
 
 #### Prometheus Metrics
