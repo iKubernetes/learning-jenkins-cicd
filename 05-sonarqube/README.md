@@ -24,4 +24,6 @@ sysctl -w vm.max_map_count=262144
 
 To permanently change the value for the vm.max_map_count setting, update the value in /etc/sysctl.conf.
 
+### 启动SonarQube Server
 
+运行docker-compose up命令，即可完成环境初始化和启动。

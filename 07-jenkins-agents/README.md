@@ -1,26 +1,44 @@
 # 基于Docker的Jenkins分布式构建环境
 
-该示例会运行三个服务：
-- jenkins01：主机名为master01.magedu.com，别名为master01和jenkins_master01，IP地址为172.31.8.2；
-  - 容器与端口8080与主机端口8080绑定；
-  - 容器与端口50000与主机端口50000绑定；
+本示例仓库用于为Jenkins Controller提供基于Docker容器的静态Agent。
 
-- jenkins02：主机名为slave01.magedu.com，别名为slave01和jenkins_slave01，IP地址为172.31.8.11；
-  - 容器与端口8080与主机端口8081绑定；
+### 基于docker容器的 jnlp Agent
 
-- jenkins03：主机名为slave02.magedu.com，别名为slave02和jenkins_slave02，IP地址为172.31.8.12；
-  - 容器与端口8080与主机端口8082绑定；
+使用方法：
 
+- 首先，在Jenkins上，开启允许jnlp agent接入：系统管理 --> 全局安全配置
 
-## 环境初始化过程
+- 而后，在Jenkins Controller上创建两个固定的Agent，其标识分别为agent01.magedu.com和agent02.magedu.com，启动方式为“通过Java Web启动代理”；
 
-### 第一步：配置master主机
+- 接着，在Jenkins Controller上获取这两个Agent的Secret，并更新到docker-compose-inbound-agent.yml文件中对应的agent之上；
 
-在master上添加slave主机。
+- 最后，运行如下命令，启用docker jnlp agent
 
+  ```bash
+  docker-compose -f docker-compose-inbound-agent.yml up -d
+  ```
 
+### 基于docker容器的 ssh agent
 
-### 第二步：启动各Agent
+使用方法：
+
+- 首先，使用ssh-keygen命令生成一对rsa格式的密钥；
+
+- 而后，将私钥创建为Jenkins Controller之上的"SSH Username with private key"类型的Credential，用户名为“jenkins”，私钥即为前一步中由命令生成的私钥；
+
+- 接着，将ssh-keygen命令生成的公钥信息更新到docker-compose-ssh-agent.yml文件中的各agent上的环境变量JENKINS_AGENT_SSH_PUBKEY的值；两个agent使用同一个公钥即可； 
+
+- 再接着，在Jenkins Controller上添加两个固定的Agent，启动方式为“Lanch aget via SSH”，各agent的标识分别为ssh-agent01.magedu.com和ssh-agent02.magedu.com；
+
+- 最后，运行如下命令，启用docker jnlp agent
+
+  ```bash
+  docker-compose -f docker-compose-ssh-agent.yml up -d
+  ```
+
+  ### 说明
+
+  基于Docker容器的静态Agent，其基础系统环境由相应的Docker Image生成，缺少很多工具程序。需要用到镜像中不具有的程序时，可以通过在Jenkins上设置全局工具程序，让Agent自动安装，也可自行基于基础镜像构建带有必要工具的镜像来。
 
 
 
