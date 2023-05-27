@@ -44,7 +44,7 @@ services:
       - postgresql/environments
 
   gitlab:
-    image: sameersbn/gitlab:15.5.0
+    image: sameersbn/gitlab:16.0.1
     hostname: gitlab.magedu.com
     depends_on:
     - redis
