@@ -14,7 +14,7 @@ networks:
 
 services:
   gitlab:
-    image: gitlab/gitlab-ce:15.6.0-ce.0
+    image: gitlab/gitlab-ce:16.0.1-ce.0
     restart: always
     hostname: 'gitlab.example.com'
     environment:
