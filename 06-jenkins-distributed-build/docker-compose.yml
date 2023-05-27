@@ -16,7 +16,7 @@ networks:
 
 services:
   jenkins01:
-    image: jenkins/jenkins:jdk11
+    image: jenkins/jenkins:jdk17
     hostname: master01.magedu.com
     user: root
     env_file:
@@ -45,7 +45,7 @@ services:
     restart: always
 
   slave01:
-    image: jenkins/jenkins:jdk11
+    image: jenkins/jenkins:jdk17
     hostname: slave01.magedu.com
     user: root
     env_file:
@@ -69,7 +69,7 @@ services:
     restart: always
 
   slave02:
-    image: jenkins/jenkins:jdk11
+    image: jenkins/jenkins:jdk17
     hostname: slave02.magedu.com
     user: root
     env_file:
