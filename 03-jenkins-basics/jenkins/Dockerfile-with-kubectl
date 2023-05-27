@@ -1,6 +1,6 @@
 # Author: MageEdu <mage@magedu.com>
 # Site: http://www.magedu.com
-FROM jenkins/jenkins:jdk11
+FROM jenkins/jenkins:jdk17
 
 ADD ./sources.list /etc/apt/sources.list
 

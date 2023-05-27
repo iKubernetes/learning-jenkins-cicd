@@ -18,7 +18,7 @@ services:
     #build:
     #  context: jenkins
     #  dockerfile: Dockerfile
-    image: jenkins/jenkins:jdk11
+    image: jenkins/jenkins:jdk17
     hostname: jenkins.magedu.com
     user: root
     env_file:
