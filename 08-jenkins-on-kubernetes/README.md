@@ -87,7 +87,7 @@ pipeline {
 
 ### 一个具有实际功用的Pipeline示例
 
-```json
+```
 pipeline {
     agent {
         kubernetes {
@@ -198,4 +198,3 @@ pipeline {
     }   
 }
 ```
-
