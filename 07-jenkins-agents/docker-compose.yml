@@ -31,8 +31,8 @@ services:
         aliases:
           - slave01
           - agent01
-    extra_hosts:
-      - "jenkins.magedu.com:${JENKINS_HOST_IP}"
+    #extra_hosts:
+    #  - "jenkins.magedu.com:${JENKINS_HOST_IP}"
     #restart: always
 
   agent02:
@@ -54,6 +54,6 @@ services:
         aliases:
           - slave02
           - agent02
-    extra_hosts:
-      - "jenkins.magedu.com:${JENKINS_HOST_IP}"
+    #extra_hosts:
+    #  - "jenkins.magedu.com:${JENKINS_HOST_IP}"
     #restart: always
