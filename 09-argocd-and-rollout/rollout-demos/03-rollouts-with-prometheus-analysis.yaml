@@ -27,7 +27,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: rollouts-helloworld-with-traffic-shifting
+  name: rollouts-helloworld-with-analysis
 spec:
   replicas: 10 
   strategy:

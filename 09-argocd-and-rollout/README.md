@@ -94,7 +94,7 @@ sum(irate(nginx_ingress_controller_requests{service=~"spring-boot-helloworld",na
 #### Rollout
 
 ```bash
-kubectl argo rollouts set image rollouts-helloworld-with-analysis spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.3 -n demo 
+kubectl argo rollouts set image rollouts-helloworld-with-analysis spring-boot-helloworld=ikubernetes/spring-boot-helloworld:v0.9.3
 ```
 
 ### Blue Green Rollout
